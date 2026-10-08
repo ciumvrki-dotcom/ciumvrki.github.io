@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CardMarket — футбольные карточки</title>
+<style>
+:root{--gold:#e8c26a;--gold2:#b8902f;--card:rgba(255,255,255,.07);--line:rgba(232,194,106,.35);--text:#f5f0ff;--muted:#b9a8dd}
+*{box-sizing:border-box}
+body{margin:0;color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:radial-gradient(circle at 20% 0%,#6d3fd1 0,transparent 45%),radial-gradient(circle at 90% 30%,#4a1d96 0,transparent 50%),linear-gradient(180deg,#2a0f55,#14062e);background-color:#14062e;background-attachment:fixed;min-height:100vh}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px;background:rgba(20,6,46,.8);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+h1{margin:0;font-family:Georgia,serif;font-size:20px;letter-spacing:.06em;color:var(--gold)}
+h1 small{display:block;font-family:system-ui,sans-serif;font-size:9px;letter-spacing:.3em;color:var(--muted);text-transform:uppercase}
+.ghost{border:1px solid var(--gold);background:transparent;color:var(--gold);border-radius:999px;padding:7px 12px;font-weight:700;font-size:13px;cursor:pointer}
+.gold,a.gold{border:0;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#2a0f55;padding:11px;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;display:block;width:100%}
+.gold:active{transform:scale(.97)}
+main{max-width:1000px;margin:0 auto;padding:16px 14px 40px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media(min-width:700px){.grid{grid-template-columns:repeat(4,1fr)}}
+.item{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px;display:flex;flex-direction:column;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.pic{aspect-ratio:3/4;border-radius:11px;overflow:hidden;border:1px solid var(--gold2);cursor:zoom-in;background:#000}
+.pic img{width:100%;height:100%;object-fit:cover;display:block}
+.name{font-weight:600;font-size:14px;line-height:1.25}
+.price{font-size:19px;font-weight:800;color:var(--gold);font-family:Georgia,serif}
+.fee-note{font-size:11px;color:var(--muted);background:rgba(232,194,106,.1);padding:4px 6px;border-radius:6px;display:none}
+body.admin .fee-note{display:block}
+#overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;z-index:9}
+.panel{position:fixed;top:0;right:0;bottom:0;width:min(420px,100%);background:#1d0a40;border-left:1px solid var(--line);z-index:10;transform:translateX(100%);transition:transform .25s;display:flex;flex-direction:column;padding:calc(14px + env(safe-area-inset-top,0px)) 16px calc(14px + env(safe-area-inset-bottom,0px));overflow-y:auto}
+.panel.open{transform:none}
+.ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.ph h2{margin:0;font-family:Georgia,serif;color:var(--gold)}
+.x{background:none;border:0;color:var(--text);font-size:26px;cursor:pointer}
+.line{display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px;align-items:center}
+.q{display:flex;align-items:center;gap:8px;margin-top:6px}
+.q button{width:26px;height:26px;border-radius:50%;border:1px solid var(--gold);background:none;color:var(--gold);cursor:pointer;font-size:16px}
+.empty{color:var(--muted);text-align:center;margin:30px 0;grid-column:1/-1}
+.total{display:flex;justify-content:space-between;font-size:18px;font-weight:800;margin:12px 0}.total span:last-child{color:var(--gold)}
+#toast{position:fixed;left:12px;right:12px;top:calc(70px + env(safe-area-inset-top,0px));z-index:30;background:var(--gold);color:#2a0f55;font-weight:700;border-radius:12px;padding:12px;display:none}#lb{position:fixed;inset:0;z-index:25;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;padding:14px}
+#lb img{max-width:100%;max-height:100%;border-radius:10px}
+.info-box{background:rgba(232,194,106,.08);border:1px solid var(--line);border-radius:10px;padding:10px;font-size:12px;line-height:1.5;margin-top:12px;display:none}
+body.admin .info-box{display:block}
+.info-box b{color:var(--gold)}
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script id="data" type="application/json">
+{"cards":[
+  {
+    "title":"Футбольная карточка",
+    "price":1500,
+    "seller":"@mine22888",
+    "fee":10,
+    "img":"https://i.ibb.co/CLdSzcv/IMG-20261008-181812.jpg"
+  },
+  {
+    "title":"Футбольная карточка",
+    "price":400,
+    "seller":"@mine22888",
+    "fee":10,
+    "img":"https://i.ibb.co/4wP62Phj/IMG-20261008-181959.jpg"
+  },
+  {
+    "title":"Футбольная карточка",
+    "price":150,
+    "seller":"@mine22888",
+    "fee":10,
+    "img":"https://i.ibb.co/bjwPPMmX/IMG-20261008-182251.jpg"
+  },
+  {
+    "title":"Футбольная карточка",
+    "price":100,
+    "seller":"@mine22888",
+    "fee":10,
+    "img":"https://i.ibb.co/Nd6zNkdX/IMG-20261008-182459.jpg"
+  }
+]}
+</script>
+
+<script>
+const ADMIN_USER="mine22888";
+const ADMIN_PASS="market22888";
+const $=id=>document.getElementById(id);
+const fmt=n=>(+n).toLocaleString("ru-RU")+" ₽";
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+let DATA={cards:[]};
+try{DATA=JSON.parse($("data").textContent)}catch(e){console.error("Ошибка в JSON:",e);alert("Ошибка в данных карточек")}
+let cards=DATA.cards||[];
+const cart={};
+
+let isAdmin=false;
+try{isAdmin=sessionStorage.getItem("cm_admin")==="1"}catch(_){}
+if(isAdmin)document.body.classList.add("admin");
+
+$("root").innerHTML=`
+<header><h1>CardMarket<small>Маркетплейс карточек</small></h1>
+<div style="display:flex;gap:6px">
+<button class="ghost" id="bAdm" style="display:none">👤</button>
+<button class="ghost" id="bCart">🛒 <span id="cnt">0</span></button>
+</div></header>
+<main>
+<p style="color:var(--muted);font-size:13px;margin:0 0 16px">Хотите продать свою карточку? Напишите <a href="https://t.me/${ADMIN_USER}" style="color:var(--gold)">@${ADMIN_USER}</a></p>
+<div class="grid" id="grid"></div>
+</main>
+<div id="overlay"></div><div id="toast"></div><div id="lb"><img alt=""></div>
+<aside class="panel" id="pCart"><div class="ph"><h2>Корзина</h2><button class="x" data-close>×</button></div><div id="lines"></div><div class="total"><span>Итого</span><span id="sum">0 ₽</span></div><a class="gold" id="pay" href="#" target="_blank" rel="noopener">Оформить заказ в Telegram</a>
+<div class="info-box" id="feeInfo"></div>
+</aside>`;
+
+function open(p){$("pCart").classList.toggle("open",!!p);$("overlay").style.display=p?"block":"none"}
+document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>open(null));
+$("overlay").onclick=()=>open(null);
+$("bCart").onclick=()=>open("pCart");
+$("lb").onclick=()=>$("lb").style.display="none";
+$("bAdm").onclick=()=>{
+  const p=prompt("Код админа:");
+  if(p===ADMIN_PASS){isAdmin=!isAdmin;try{isAdmin?sessionStorage.setItem("cm_admin","1"):sessionStorage.removeItem("cm_admin")}catch(_){};document.body.classList.toggle("admin",isAdmin);render();toast(isAdmin?"Админ-режим включён":"Админ-режим выключен")}
+  else if(p!==null)toast("Неверный код");
+};
+function toast(t){const e=$("toast");e.textContent=t;e.style.display="block";setTimeout(()=>e.style.display="none",4500)}
+
+const params=new URLSearchParams(location.search);
+if(params.get("admin")===ADMIN_USER){$("bAdm").style.display="inline-block"}
+
+function render(){
+ $("grid").innerHTML=cards.map((c,i)=>`<div class="item">
+   <div class="pic" data-zoom="${i}"><img src="${esc(c.img)}" alt=""></div>
+   <div class="name">${esc(c.title)}</div>
+   <div class="price">${fmt(c.price)}</div>${c.seller?`<div class="fee-note">Продавец: ${esc(c.seller)} · Комиссия: ${c.fee||0}% · Продавцу: ${fmt(Math.round(c.price*(1-(c.fee||0)/100)))}</div>`:""}
+   <button class="gold" data-add="${i}">Купить</button>
+ </div>`).join("")||`<div class="empty">Пока нет карточек.</div>`;
+ renderCart()}
+
+function renderCart(){
+ let n=0,s=0,h="",t="",totalFee=0,totalSeller=0;
+ for(const k in cart){
+  const c=cards[k];if(!c||!cart[k])continue;
+  const q=cart[k];n+=q;s+=q*c.price;
+  const fee=c.fee||0;
+  const sellerPart=Math.round(c.price*(1-fee/100))*q;
+  totalSeller+=sellerPart;
+  totalFee+=q*c.price-sellerPart;
+  h+=`<div class="line"><div><div>${esc(c.title)}</div><div class="q"><button data-q="${k}" data-d="-1">−</button><b>${q}</b><button data-q="${k}" data-d="1">+</button></div></div><div>${fmt(q*c.price)}</div></div>`;
+  t+=`• ${c.title} × ${q} — ${fmt(q*c.price)}\n`}
+ $("cnt").textContent=n;$("sum").textContent=fmt(s);$("lines").innerHTML=h||'<div class="empty">Корзина пуста</div>';
+ $("pay").href=`https://t.me/${ADMIN_USER}?text=`+encodeURIComponent(n?`Здравствуйте! Хочу купить:\n${t}\nИтого: ${fmt(s)}`:"Здравствуйте! Хочу купить карточки");
+ $("pay").style.opacity=n?1:.5;$("pay").style.pointerEvents=n?"auto":"none";
+ $("feeInfo").innerHTML=n?`<b>Только для админа:</b><br>Покупатель платит: <b>${fmt(s)}</b><br>Продавцам уйдёт: <b>${fmt(totalSeller)}</b><br>Ваша комиссия: <b>${fmt(totalFee)}</b>`:"";
+}
+
+document.addEventListener("click",e=>{
+ const z=e.target.closest("[data-zoom]");
+ if(z){const c=cards[+z.dataset.zoom];if(c&&c.img){$("lb").querySelector("img").src=c.img;$("lb").style.display="flex"}return}
+ const a=e.target.closest("[data-add]");
+ if(a){cart[a.dataset.add]=(cart[a.dataset.add]||0)+1;renderCart();open("pCart");return}
+ const q=e.target.closest("[data-q]");
+ if(q){cart[q.dataset.q]=Math.max(0,(cart[q.dataset.q]||0)+ +q.dataset.d);renderCart()}
+});
+
+render();
+</script>
+</body>
+</html>
